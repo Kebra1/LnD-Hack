@@ -1,0 +1,123 @@
+# Бірге
+
+Название выбрано пользователем: «Бірге — вместе». Прототип для Mama Pro Social Impact Hackathon.
+Визуальная система: [BRAND_GUIDE](docs/BRAND_GUIDE.md).
+
+Рабочий прототип хакатона: помощь ребёнку и поддержка мамы. Актуальный контекст — [PROJECT_CONTEXT](docs/PROJECT_CONTEXT.md), приоритеты — [HACKATHON_DELIVERY](docs/HACKATHON_DELIVERY.md).
+
+Историческая инициализация выполнена по [Architecture Design Document v1.1](outputs/Architecture-Design-Document-v1.1.md).
+
+## Требования
+
+- Node.js 24 LTS, npm 11.
+- Для проверки PostgreSQL — Docker Desktop с запущенным Linux engine либо доступная PostgreSQL.
+
+## Запуск
+
+1. Выполнить `npm ci`.
+2. Скопировать `.env.example` в `.env.local` и задать локальный пароль PostgreSQL.
+   Пароль в `DATABASE_URL` должен совпадать с `POSTGRES_PASSWORD` и быть URL-encoded.
+   Демонстрационный web-сервер также работает без `.env.local` и БД.
+3. `npm run env:check` проверяет конфигурацию, не печатая значения секретов.
+4. `npm run dev` запускает приложение на http://localhost:3000.
+
+## Проверки
+
+- `npm run check` — ESLint, Next typegen, TypeScript strict и тесты конфигурации.
+- `npm run build` — production build.
+- `npm start` — production server после build.
+- `npm run db:up` — локальная PostgreSQL 17 на 127.0.0.1:5432.
+- `npm run db:check` — реальный запрос и транзакция Drizzle в PostgreSQL.
+- `npm run db:down` — остановить контейнер, сохранив named volume.
+
+## Миграции
+
+Drizzle schema находится в `src/lib/db/schema`. Доменные таблицы и миграции
+добавляются при реализации соответствующих функций. Пока таблиц нет,
+`db:generate` завершится без создания SQL. После появления схемы выполнить
+`npm run db:generate`, проверить SQL и применить `npm run db:migrate`.
+Не использовать push для production.
+
+## Границы текущего этапа
+
+Созданы App Router, строгая типизация, ESLint, Zod env validation, серверный
+PostgreSQL pool и Drizzle config. Реализован интерактивный учебный прототип:
+главная, каталог, маршрут и review подготовленного разбора документа.
+Живой AI и auth остаются следующими этапами; подробные границы описаны ниже.
+
+`src/lib/env/server.ts` и `src/lib/db/client.ts` имеют server-only boundary.
+Секреты не добавляются в NEXT_PUBLIC переменные. CLI-команды загружают `.env.local`
+через встроенный механизм Node. Флаги пока являются конфигурацией будущих функций.
+
+Git хранит исходники, lockfile и утверждённую архитектуру. `.env.local`, work,
+бинарные исследования и generated build/test files исключены.
+
+## Особенность текущего компьютера
+
+Docker Desktop при проверке завершился с ошибкой инициализации Docker Inference.
+Реальная интеграция проверена на отдельном PostgreSQL 17.11, запущенном из
+бинарников в игнорируемой папке `work/postgres-binaries`; данные — в
+`work/postgres-data`. Он слушает только 127.0.0.1:5432. Пароль генерируется локально.
+Эти бинарники не являются зависимостью приложения и не входят в Git.
+Для другого компьютера используйте Compose или собственный PostgreSQL.
+
+Для остановки проверочного сервера в PowerShell:
+
+```powershell
+& '.\work\postgres-binaries\package\native\bin\pg_ctl.exe' -D 'work\postgres-data' -m fast -w stop
+```
+
+Чтобы повторно запустить его:
+
+```powershell
+& '.\work\postgres-binaries\package\native\bin\pg_ctl.exe' -D 'work\postgres-data' -l 'work\postgres-server.log' -o '-h 127.0.0.1 -p 5432 -c timezone=UTC' -w start
+```
+
+Остановите этот сервер перед `db:up`, чтобы освободить порт 5432.
+Не удаляйте Docker volumes для устранения проблемы запуска Docker Desktop.
+
+## Состояние зависимостей
+
+Используется совместимый с текущим `eslint-config-next` ESLint 9.39.5.
+ESLint 10 проходит lint, но создаёт invalid peer dependencies у вложенных плагинов,
+поэтому не включён в lockfile. ESLint 9 помечен npm как deprecated.
+Полный audit содержит 11 moderate замечаний в dev-toolchain (Drizzle Kit/esbuild
+и typescript-eslint/minimatch). Runtime audit `npm audit --omit=dev` чистый.
+Автоматический `audit fix --force` меняет major-версии и здесь не применяется.
+
+## Интерактивный прототип H1
+
+Основной интерфейс доступен на `/ru` и `/kk`:
+главная, `/catalog`, `/compare`, `/providers/[id]`, `/contact/[id]`, `/for-me`, `/route`.
+Первый вход — краткая необязательная анкета ребёнка. После сохранения показаны рекомендации и два входа: помощь ребёнку и поддержка мамы. Поддержка мамы доступна и без анкеты.
+
+- Анкета: возраст, город, язык и задачи; объяснение совпадений, редактирование и удаление. Имя необязательно, диагноз не запрашивается.
+- Няни: 4 вымышленные записи, поиск/фильтры, почасовая/помесячная/постоянная занятость, демо-бронь, проверка периода и отмена (`/nannies`, `/bookings`). Это не отправка заявки настоящей няне.
+- Сообщество: темы, комментарии, редактирование/удаление своих сообщений, поиск по темам и комментариям, категории, сортировка и локальная жалоба (`/community`). Нет реальной публикации и доставки модератору.
+- Каталог: 7 явно вымышленных карточек, город/возраст/категория/язык, исходные неизвестные значения.
+- Сравнение до 3 вариантов, публичный профиль, явное отсутствие проверки дипломов/рейтинга.
+- Подготовка и копирование обращения. Контакты `.invalid`, обращение никуда не отправляется.
+- Для мамы: 6 немедицинских идей досуга, этап беременности/после рождения/воспитания и фильтр времени.
+- Общий план: ручные цели, выбранные услуги/занятия, выполнение/удаление. Смена языка сохраняет
+  выбранные записи и фильтры, refresh очищает всё. Анкета, брони и форум также очищаются при refresh. Контекст принадлежит root layout вкладки;
+  нет localStorage/sessionStorage, серверного сохранения или реальных медицинских данных.
+- `/ru/documents` — сохранённый legacy fixture-разбор, 3 синтетических текстовых примера и цитаты.
+  `/kk/documents` перенаправляет на русский учебный экран, который явно обозначен как русский.
+
+Живой AI, PDF parser, Supabase Auth/Storage/RLS/доменная БД, реальные контакты, карта, кабинеты,
+реальная модерация и многопользовательское сообщество пока не реализованы. Supabase credentials не настроены. Не вводите реальные
+персональные/медицинские данные; demo не является production/pilot. Полный M01–M18 остаётся в
+[DEVELOPMENT_PLAN](docs/DEVELOPMENT_PLAN.md). Старый Drizzle ниже — заготовка, не используемая
+доменные миграции; переход на Supabase migrations выполняется отдельно в S1.
+
+Проверки:
+- `npm run check`: lint, typecheck, 41 unit tests.
+- `npx playwright install chromium`: однократная установка браузера.
+- `npm run test:e2e`: 18 browser tests: оба пути ru/kk, сравнение, copy draft, plan, legacy review,
+  изоляция вкладок/refresh и размеры360/390/768/1280. При отсутствии сервера стартует dev на3000.
+  Для проверки production предварительно `npm run build`, затем `npm start -- --hostname 127.0.0.1`.
+- `npm run build`: production build.
+
+Материалы показа: [HACKATHON_PITCH](docs/HACKATHON_PITCH.md),
+[лицензии и AI disclosure](docs/THIRD_PARTY_NOTICES.md).
+Пользовательский тест с родителем, финальная презентация PPTX и передача организатору ещё не выполнены.

@@ -1,0 +1,17 @@
+node_modules/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+.env*
+!.env.example
+*.log
+.DS_Store
+work/
+outputs/*
+!outputs/Architecture-Design-Document-v1.1.md
+!outputs/Project-Initialization.md
+
+test-results/
+playwright-report/

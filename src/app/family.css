@@ -1,0 +1,522 @@
+/* Profile-first family flows: layouts only; shared colors live in brand.css. */
+.onboarding-page {
+  max-width: 850px;
+  margin: 0 auto 55px;
+}
+.onboarding-form {
+  border-top: 4px solid #2563eb;
+}
+.onboarding-form fieldset {
+  padding: 0;
+  margin: 12px 0;
+  border: 0;
+}
+.onboarding-form legend {
+  font-size: 17px;
+  font-weight: 650;
+  color: #173f7a;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 22px;
+}
+.need-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.need-option {
+  padding: 14px;
+  background: #edf4ff;
+  border: 1px solid #bed4fa;
+  border-radius: 12px;
+  margin: 0;
+  color: #204b87;
+  font-size: 14px;
+  align-items: center;
+  min-height: 52px;
+}
+.form-error {
+  border: 1px solid #efb3ad;
+  background: #fff0ee;
+  color: #9b2e25;
+  padding: 13px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+.profile-match {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 22px;
+  padding: 18px 22px;
+  margin-top: 25px;
+  background: #e4f1ff;
+  border: 1px solid #adcdfb;
+  border-radius: 16px;
+  border-left: 5px solid #2563eb;
+}
+.profile-match > div {
+  flex: 1;
+  min-width: 180px;
+}
+.profile-match b {
+  color: #17458d;
+  font-size: 17px;
+}
+.profile-match p {
+  font-size: 13px;
+  color: #365c8f;
+  margin: 7px 0 0;
+  line-height: 1.6;
+}
+.profile-match .button {
+  font-size: 12px;
+}
+.recommendations {
+  margin: 32px 0;
+}
+.recommendations h2 {
+  font-size: 26px;
+}
+.recommendation-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.recommendation-grid h3 {
+  font-size: 21px;
+  margin: 16px 0 8px;
+  color: #173f7a;
+}
+.recommendation-grid .button {
+  margin-top: 10px;
+}
+.quick-services {
+  background: #fff2cf;
+  border: 1px solid #f2cb70;
+  border-radius: 18px;
+  padding: 24px;
+  margin: 25px 0;
+}
+.quick-services h2 {
+  font-size: 24px;
+  color: #81500b;
+}
+.search-field {
+  display: block;
+  margin: 24px 0;
+  font-size: 14px;
+  color: #204b87;
+  font-weight: 650;
+}
+.search-field input {
+  min-height: 53px;
+  border: 2px solid #9fc3fa;
+  background: white;
+  font-size: 16px;
+}
+.nanny-filters,
+.forum-filters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px 20px;
+  align-items: end;
+  background: #eaf3ff;
+  border: 1px solid #bed5f6;
+  border-radius: 17px;
+  padding: 23px;
+  margin: 25px 0;
+}
+.nanny-filters label,
+.forum-filters label {
+  margin: 0;
+  color: #234d86;
+  font-size: 13px;
+}
+.nanny-filters label:first-child,
+.forum-filters label:first-child {
+  grid-column: span 2;
+}
+.nanny-filters .check {
+  min-height: 48px;
+  align-items: center;
+}
+.nanny-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 21px;
+  margin: 25px 0 60px;
+}
+.nanny-card {
+  display: flex;
+  flex-direction: column;
+}
+.nanny-card > .button {
+  margin-top: auto;
+}
+.nanny-card > .quiet {
+  font-size: 12px;
+  color: #536987;
+}
+.nanny-rates {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0;
+}
+.nanny-rates > div {
+  background: #eef5ff;
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+}
+.nanny-rates dt {
+  margin: 0;
+  color: #325c94;
+  font-size: 12px;
+}
+.nanny-rates dd {
+  margin: 0;
+  color: #17478d;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: right;
+}
+.booking-price {
+  padding: 16px 20px;
+  background: #dff8ef;
+  border: 1px solid #9edac8;
+  border-radius: 12px;
+  color: #096b50;
+}
+.booking-form .quiet {
+  color: #536987;
+}
+.booking-list {
+  display: grid;
+  gap: 20px;
+  max-width: 900px;
+  margin: 25px auto 60px;
+}
+.booking-list h2 {
+  margin: 0;
+  font-size: 24px;
+}
+.booking-list .tag {
+  background: #d8f5e9;
+  color: #176a4a;
+}
+.cancelled-booking {
+  background: #f0f3f8 !important;
+}
+.cancelled-booking .tag {
+  background: #e0e6ef;
+  color: #4f617b;
+}
+.forum-list {
+  max-width: 1000px;
+  margin: 25px auto 60px;
+  display: grid;
+  gap: 19px;
+}
+.forum-card h2 {
+  font-size: 25px;
+  color: #173f7a;
+  margin: 20px 0 10px;
+}
+.forum-card .tag {
+  background: #d9f4ef;
+  color: #006c5b;
+}
+.forum-excerpt {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.thread-page {
+  max-width: 900px;
+  margin: 0 auto 60px;
+}
+.forum-thread h1 {
+  font-size: 33px;
+  line-height: 1.25;
+  margin: 22px 0;
+  color: #173f7a;
+  overflow-wrap: anywhere;
+  letter-spacing: -1px;
+}
+.post-content {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: #263f61;
+  line-height: 1.85;
+}
+.thread-comments {
+  margin-top: 35px;
+}
+.thread-comments h2 {
+  font-size: 24px;
+  color: #173f7a;
+}
+.comment-card {
+  border: 1px solid #bfd5ee;
+  border-left: 4px solid #099e87;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 15px 0;
+}
+.comment-card b {
+  font-size: 12px;
+  color: #26765f;
+}
+.post-form {
+  margin: 25px 0;
+  border-top: 4px solid #009e84;
+}
+.post-form h2 {
+  color: #095f4c;
+}
+.forum-filters {
+  grid-template-columns: 2fr 1fr 1fr auto;
+}
+.forum-filters label:first-child {
+  grid-column: auto;
+}
+:is(
+  .filters h2,
+  .provider-heading h2,
+  .activity-card h2,
+  .profile-name h2,
+  .route-aside h2,
+  .empty h2,
+  .empty h3,
+  .comparison-grid .offering-card h2
+) {
+  color: #173f7a;
+}
+.offering-card > p,
+.activity-card p,
+.route-aside p,
+.trust-box p,
+dd,
+.comparison-grid dd {
+  color: #486286;
+}
+.activity-icon {
+  color: #a94c00;
+  background: #ffe6b5;
+}
+.activity-card {
+  border-color: #f0d49a;
+  background: linear-gradient(145deg, #fffef9, #fff1d4);
+}
+.activity-card .tag {
+  color: #8a4a00;
+  background: #ffe7bd;
+}
+.activity-card .button {
+  color: #934100;
+  border-color: #e7bc80;
+  background: #fff9eb;
+}
+.activity-card .button:hover {
+  background: #ffe4b3;
+}
+.maternal-banner {
+  background: linear-gradient(125deg, #d9f5ed, #dcedff);
+  border-color: #9bd8cb;
+}
+.maternal-banner h2 {
+  color: #086b56;
+}
+.maternal-banner p {
+  color: #286d62;
+}
+.profile-panel h3 {
+  color: #345f9b;
+}
+.trust-box {
+  background: #edf5ff;
+  border-color: #b9d1f2;
+  color: #21579b;
+}
+.tag {
+  color: #1d51a5;
+  background: #e1ecff;
+}
+.light {
+  color: #2055ac;
+  border-color: #b9cff1;
+}
+.light:hover {
+  background: #e6f0ff;
+}
+.text-link {
+  color: #2055ac;
+}
+.header .simple-nav a[aria-current="page"] {
+  background: #dce9ff;
+  color: #164aaa;
+}
+.header .simple-nav a:hover {
+  background: #eaf2ff;
+}
+.language-switch {
+  border-color: #c7d9f2;
+  background: #edf4ff;
+}
+.language-switch a[aria-current="true"] {
+  background: #2563eb;
+  color: #fff;
+}
+.count {
+  background: #2563eb;
+}
+.session-note {
+  background: #e5f0ff;
+  color: #365f96;
+  border-color: #c9ddf8;
+}
+.notice {
+  background: #fff4d7;
+  border-color: #efcd81;
+  color: #795416;
+}
+.comparison-tray,
+.toast {
+  background: #164ca8;
+  border-color: #83a8e5;
+}
+.footer,
+.footer p,
+.footer a,
+.footer > span {
+  color: #42638d;
+}
+.entry-feature,
+.entry-card p {
+  color: #2f5b88;
+}
+.mother-entry p,
+.mother-entry .entry-feature {
+  color: #825012;
+}
+.heading-spark {
+  color: #f09d25;
+}
+.brand small {
+  color: #4f698e;
+}
+.entry-badge {
+  color: #205b9a;
+}
+.mother-entry .entry-badge {
+  color: #a25700;
+}
+.button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline-color: #005feb;
+}
+@media (max-width: 1000px) {
+  .forum-filters {
+    grid-template-columns: 1fr 1fr;
+  }
+  .forum-filters label:first-child {
+    grid-column: span 2;
+  }
+  .recommendation-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 650px) {
+  .header .simple-nav {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 1px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+  .header .simple-nav a {
+    font-size: 9px;
+    padding-left: 2px;
+    padding-right: 2px;
+    min-height: 62px;
+  }
+  .header .simple-nav a > span {
+    overflow-wrap: anywhere;
+    line-height: 1.2;
+  }
+  .form-grid,
+  .need-options,
+  .recommendation-grid,
+  .nanny-grid,
+  .nanny-filters,
+  .forum-filters {
+    grid-template-columns: 1fr;
+  }
+  .nanny-filters label:first-child,
+  .forum-filters label:first-child {
+    grid-column: auto;
+  }
+  .nanny-filters,
+  .forum-filters {
+    padding: 19px;
+    gap: 16px;
+  }
+  .profile-match {
+    padding: 16px;
+  }
+  .profile-match > div {
+    min-width: 100%;
+  }
+  .profile-match .button {
+    width: 100%;
+  }
+  .onboarding-page .page-heading h1 {
+    font-size: 31px;
+  }
+  .onboarding-form {
+    padding: 22px;
+  }
+  .onboarding-form legend {
+    font-size: 16px;
+  }
+  .recommendations h2 {
+    font-size: 24px;
+  }
+  .recommendation-grid h3 {
+    font-size: 22px;
+  }
+  .booking-list h2 {
+    font-size: 22px;
+  }
+  .nanny-rates > div {
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+  .forum-thread h1 {
+    font-size: 28px;
+  }
+  .comment-card {
+    padding: 17px;
+  }
+  .forum-card h2 {
+    font-size: 23px;
+  }
+  .forum-card .card-bottom {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .quick-services .button {
+    width: 100%;
+  }
+}
