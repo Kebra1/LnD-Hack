@@ -14,12 +14,10 @@ test("сначала анкета, затем рекомендации; реда
   await expect(
     page.getByRole("heading", { name: "Сначала познакомимся" }),
   ).toBeVisible();
-  await page.getByRole("textbox", { name: "Ваше имя" }).fill("Учебный родитель");
-  await page.getByText("Уточнить подбор (необязательно)").click();
   await page
-    .getByRole("combobox", { name: "Предпочтительный язык", exact: true })
-    .selectOption("kk");
-  await completeProfile(page, "ru", "12", true);
+    .getByRole("textbox", { name: "Введите ваше имя" })
+    .fill("Учебный родитель");
+  await completeProfile(page, "ru", "12", true, "kk");
   await expect(
     page.getByRole("article").filter({ hasText: "Алия С." }),
   ).toHaveCount(1);
@@ -45,10 +43,13 @@ test("сначала анкета, затем рекомендации; реда
   await page
     .getByRole("link", { name: "Изменить профиль", exact: true })
     .click();
-  await expect(page.getByRole("button", { name: "Сохранить и подобрать", exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Далее", exact: true }),
+  ).toBeVisible();
   await page
     .getByRole("combobox", { name: "Откуда вы?", exact: true })
     .selectOption("Астана");
+  await page.getByRole("button", { name: "Далее", exact: true }).click();
   await page
     .getByRole("button", { name: "Сохранить и подобрать", exact: true })
     .click();
@@ -207,30 +208,70 @@ test("форум: публикация, правка, комментарий, п
   ).toBeDisabled();
 });
 
-test("простая анкета: без справок сразу показываются шаги, имя и город сохраняются", async ({
+test("анкета в два шага: город по областям, без справок сразу шаги, файлы только в памяти", async ({
   page,
 }) => {
   await page.goto("/ru");
-  await page.getByRole("textbox", { name: "Ваше имя" }).fill("Учебный родитель");
+  await expect(page.getByText("Шаг 1 из 2 · Знакомство")).toBeVisible();
   await page
-    .getByRole("combobox", { name: "Откуда вы?", exact: true })
-    .selectOption("other");
+    .getByRole("textbox", { name: "Введите ваше имя" })
+    .fill("Учебный родитель");
+  const city = page.getByRole("combobox", { name: "Откуда вы?", exact: true });
+  const groups = await city
+    .locator("optgroup")
+    .evaluateAll((els) => els.map((el) => el.getAttribute("label")));
+  expect(groups[0]).toBe("Мегаполисы");
+  expect(groups).toContain("Туркестанская область");
+  const megacities = await city
+    .locator("optgroup")
+    .first()
+    .locator("option")
+    .allTextContents();
+  expect(megacities).toEqual(["Астана", "Алматы", "Шымкент"]);
+  await city.selectOption("Шымкент");
+  await page.getByRole("button", { name: "Далее", exact: true }).click();
+  await expect(page.getByText("Шаг 2 из 2 · О ребёнке")).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "О вашем ребёнке" }),
+  ).toBeVisible();
   await page
     .getByRole("textbox", { name: "Диагноз ребёнка, если знаете" })
     .fill("учебный пример");
+  await page.getByLabel("Есть", { exact: true }).check();
+  const input = page.locator("input[type=file]");
+  await input.setInputFiles({
+    name: "virus.exe",
+    mimeType: "application/octet-stream",
+    buffer: Buffer.from("x"),
+  });
   await expect(
-    page.getByRole("heading", { name: "Что можно сделать, если справок пока нет" }),
-  ).toHaveCount(0);
+    page.getByText("Подходят только PDF, JPG и PNG."),
+  ).toBeVisible();
+  await input.setInputFiles({
+    name: "zakluchenie.pdf",
+    mimeType: "application/pdf",
+    buffer: Buffer.from("%PDF-1.4 учебный файл"),
+  });
+  await expect(page.getByText(/zakluchenie\.pdf · 1 КБ/)).toBeVisible();
   await page.getByLabel("Пока нет", { exact: true }).check();
   await expect(
-    page.getByRole("heading", { name: "Что можно сделать, если справок пока нет" }),
+    page.getByRole("heading", {
+      name: "Что можно сделать, если справок пока нет",
+    }),
   ).toBeVisible();
+  await page.getByRole("button", { name: "Назад", exact: true }).click();
+  await expect(page.getByRole("textbox", { name: "Введите ваше имя" })).toHaveValue(
+    "Учебный родитель",
+  );
+  await page.getByRole("button", { name: "Далее", exact: true }).click();
   await page
     .getByRole("button", { name: "Сохранить и подобрать", exact: true })
     .click();
   await expect(page.getByText("Здравствуйте, Учебный родитель")).toBeVisible();
+  await expect(page.getByText("Шымкент", { exact: false }).first()).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: "Что можно сделать, если справок пока нет" }),
+    page.getByRole("heading", {
+      name: "Что можно сделать, если справок пока нет",
+    }),
   ).toBeVisible();
-  await expect(page.getByText("Другой город")).toBeVisible();
 });

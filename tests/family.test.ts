@@ -30,6 +30,7 @@ const profile: ChildProfile = {
   diagnosis: "",
   documentsStatus: "",
   documents: [],
+  documentFiles: [],
   revision: 1,
 };
 const now = Date.parse("2026-11-13T00:00:00Z");
@@ -45,14 +46,14 @@ const draft: BookingDraft = {
 };
 describe("анкета: город и справки", () => {
   it("другой город не фильтрует каталог, а подсказки только без справок", () => {
-    expect(profileCity({ city: "other" })).toBe("");
+    expect(profileCity({ city: "Шымкент" })).toBe("");
     expect(profileCity({ city: "Астана" })).toBe("Астана");
     expect(needsGuidance({ documentsStatus: "none" })).toBe(true);
     expect(needsGuidance({ documentsStatus: "unsure" })).toBe(true);
     expect(needsGuidance({ documentsStatus: "have" })).toBe(false);
     expect(needsGuidance({ documentsStatus: "" })).toBe(false);
     expect(
-      recommendOfferings({ ...profile, city: "other", language: "" }).length,
+      recommendOfferings({ ...profile, city: "Шымкент", language: "" }).length,
     ).toBeGreaterThan(0);
   });
 });
@@ -71,7 +72,23 @@ describe("профиль и рекомендации", () => {
         language: "",
       }),
     ).toBe(true);
-    expect(validProfile({ ...profile, city: "other" })).toBe(true);
+    expect(validProfile({ ...profile, city: "Шымкент" })).toBe(true);
+    expect(validProfile({ ...profile, city: "Неизвестный" })).toBe(false);
+    expect(
+      validProfile({
+        ...profile,
+        documentFiles: [{ name: "a.pdf", size: 11 * 1024 * 1024 }],
+      }),
+    ).toBe(false);
+    expect(
+      validProfile({
+        ...profile,
+        documentFiles: Array.from({ length: 6 }, (_, i) => ({
+          name: `f${i}.pdf`,
+          size: 1,
+        })),
+      }),
+    ).toBe(false);
     expect(validProfile({ ...profile, diagnosis: "x".repeat(121) })).toBe(
       false,
     );

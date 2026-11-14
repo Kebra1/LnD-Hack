@@ -10,6 +10,7 @@ import {
   recommendOfferings,
 } from "@/features/children/service";
 import DocumentGuidance from "@/features/children/document-guidance";
+import { cityLabel } from "@/features/children/cities";
 import { localizeOffering } from "@/features/catalog/translations";
 import {
   FamilyIllustration,
@@ -38,7 +39,7 @@ export default function HomeScreen() {
           </b>
           <p>
             {[
-              childProfile.city === "other" ? f.otherCity : childProfile.city,
+              cityLabel(childProfile.city, locale),
               childProfile.age === null
                 ? null
                 : `${childProfile.age} ${t.years}`,

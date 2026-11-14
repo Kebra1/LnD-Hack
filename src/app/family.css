@@ -608,3 +608,68 @@ input[type="radio"] {
 .need-option input[type="checkbox"] {
   accent-color: #2563eb;
 }
+.step-bar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin: 10px 0 14px;
+}
+.step-bar span {
+  height: 6px;
+  border-radius: 99px;
+  background: #cfe0fa;
+}
+.step-bar span.done {
+  background: #2563eb;
+}
+.file-upload {
+  display: grid;
+  gap: 10px;
+  margin-top: 8px;
+  padding-top: 14px;
+  border-top: 1px dashed #bed4fa;
+}
+.file-button {
+  position: relative;
+  justify-self: start;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+.file-button:focus-within {
+  outline: 3px solid #005feb;
+  outline-offset: 2px;
+}
+.file-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  min-height: 0;
+  cursor: pointer;
+}
+.file-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.file-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #edf4ff;
+  border: 1px solid #bed4fa;
+  border-radius: 10px;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+}
+.onboarding-form .actions {
+  flex-wrap: wrap;
+}
