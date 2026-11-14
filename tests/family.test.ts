@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
+  needsGuidance,
+  profileCity,
   recommendOfferings,
   validProfile,
   type ChildProfile,
@@ -19,11 +21,15 @@ import {
   type Post,
 } from "../src/features/community/service";
 const profile: ChildProfile = {
+  parentName: "",
   alias: "Пример",
   age: 12,
   city: "Алматы",
   language: "kk",
   needs: ["communication"],
+  diagnosis: "",
+  documentsStatus: "",
+  documents: [],
   revision: 1,
 };
 const now = Date.parse("2026-11-13T00:00:00Z");
@@ -37,6 +43,19 @@ const draft: BookingDraft = {
   months: 1,
   weeklyHours: 40,
 };
+describe("анкета: город и справки", () => {
+  it("другой город не фильтрует каталог, а подсказки только без справок", () => {
+    expect(profileCity({ city: "other" })).toBe("");
+    expect(profileCity({ city: "Астана" })).toBe("Астана");
+    expect(needsGuidance({ documentsStatus: "none" })).toBe(true);
+    expect(needsGuidance({ documentsStatus: "unsure" })).toBe(true);
+    expect(needsGuidance({ documentsStatus: "have" })).toBe(false);
+    expect(needsGuidance({ documentsStatus: "" })).toBe(false);
+    expect(
+      recommendOfferings({ ...profile, city: "other", language: "" }).length,
+    ).toBeGreaterThan(0);
+  });
+});
 describe("профиль и рекомендации", () => {
   it("все выбранные условия учитываются, unknown не считается подтвержденным", () => {
     expect(recommendOfferings(profile).map((o) => o.id)).toEqual(["speech"]);
@@ -52,6 +71,13 @@ describe("профиль и рекомендации", () => {
         language: "",
       }),
     ).toBe(true);
+    expect(validProfile({ ...profile, city: "other" })).toBe(true);
+    expect(validProfile({ ...profile, diagnosis: "x".repeat(121) })).toBe(
+      false,
+    );
+    expect(
+      validProfile({ ...profile, documentsStatus: "nope" as never }),
+    ).toBe(false);
     expect(validProfile({ ...profile, age: 1.5 })).toBe(false);
     expect(validProfile({ ...profile, age: -1 })).toBe(false);
   });

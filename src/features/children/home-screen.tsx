@@ -4,7 +4,12 @@ import Link from "next/link";
 import { useDemo } from "@/ui/demo-shell";
 import { useLocale } from "@/ui/use-locale";
 import OnboardingScreen from "@/features/children/onboarding-screen";
-import { recommendOfferings } from "@/features/children/service";
+import {
+  needsGuidance,
+  profileCity,
+  recommendOfferings,
+} from "@/features/children/service";
+import DocumentGuidance from "@/features/children/document-guidance";
 import { localizeOffering } from "@/features/catalog/translations";
 import {
   FamilyIllustration,
@@ -22,13 +27,18 @@ export default function HomeScreen() {
     <div className="simple-home">
       <div className="profile-match">
         <div>
+          {childProfile.parentName && (
+            <small>
+              {f.hello}, {childProfile.parentName}
+            </small>
+          )}
           <b>
             {f.yourChild}
             {childProfile.alias ? `: ${childProfile.alias}` : ""}
           </b>
           <p>
             {[
-              childProfile.city,
+              childProfile.city === "other" ? f.otherCity : childProfile.city,
               childProfile.age === null
                 ? null
                 : `${childProfile.age} ${t.years}`,
@@ -46,6 +56,7 @@ export default function HomeScreen() {
           {f.editProfile}
         </Link>
       </div>
+      {needsGuidance(childProfile) && <DocumentGuidance />}
       <section className="home-hero">
         <div className="page-heading">
           <p className="eyebrow">
@@ -124,7 +135,7 @@ export default function HomeScreen() {
                 <h3>{item.name}</h3>
                 <p>{item.service}</p>
                 <div className="chips">
-                  {childProfile.city && <span>{f.matchedCity}</span>}
+                  {profileCity(childProfile) && <span>{f.matchedCity}</span>}
                   {childProfile.age !== null && <span>{f.matchedAge}</span>}
                   {childProfile.language && <span>{f.matchedLanguage}</span>}
                   {childProfile.needs.length > 0 && (

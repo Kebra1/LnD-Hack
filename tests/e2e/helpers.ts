@@ -13,15 +13,22 @@ export async function completeProfile(
     })
     .fill(age);
   await page
-    .getByRole("combobox", { name: kk ? "Қала" : "Город", exact: true })
+    .getByRole("combobox", {
+      name: kk ? "Сіз қайдансыз?" : "Откуда вы?",
+      exact: true,
+    })
     .selectOption("Алматы");
-  if (needs)
+  if (needs) {
+    const more = page.locator("details.more-options");
+    if (!(await more.evaluate((el: HTMLDetailsElement) => el.open)))
+      await more.locator("summary").click();
     await page
       .getByRole("checkbox", {
         name: kk ? "Сөйлеу және қарым-қатынас" : "Речь и общение",
         exact: true,
       })
       .check();
+  }
   await page
     .getByRole("button", {
       name: kk ? "Сақтап, маман таңдау" : "Сохранить и подобрать",

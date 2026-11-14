@@ -11,6 +11,7 @@ import { useLocale } from "@/ui/use-locale";
 import { categoryLabels } from "@/locales/messages";
 import { LineIcon } from "@/ui/brand-art";
 import OnboardingScreen from "@/features/children/onboarding-screen";
+import { profileCity } from "@/features/children/service";
 function OfferingDetails({
   item,
   close,
@@ -113,7 +114,7 @@ export default function CatalogScreen({
     audience,
     ...(personal
       ? {
-          city: childProfile!.city,
+          city: profileCity(childProfile!),
           age: childProfile!.age === null ? "" : String(childProfile!.age),
           language: childProfile!.language,
         }
@@ -146,7 +147,7 @@ export default function CatalogScreen({
           ? {
               audience: "child",
               age: childProfile!.age === null ? "" : String(childProfile!.age),
-              city: childProfile!.city,
+              city: profileCity(childProfile!),
               language: childProfile!.language,
             }
           : {}),

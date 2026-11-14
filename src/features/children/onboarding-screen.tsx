@@ -5,7 +5,15 @@ import { useRouter } from "next/navigation";
 import { useDemo } from "@/ui/demo-shell";
 import { useLocale } from "@/ui/use-locale";
 import { categoryLabels } from "@/locales/messages";
-import { needCodes, validProfile, type ChildProfile } from "./service";
+import DocumentGuidance from "./document-guidance";
+import {
+  documentCodes,
+  needCodes,
+  validProfile,
+  type ChildProfile,
+  type DocumentCode,
+  type DocumentsStatus,
+} from "./service";
 export default function OnboardingScreen() {
   const {
     childProfile,
@@ -16,16 +24,34 @@ export default function OnboardingScreen() {
   } = useDemo();
   const { locale, t, f } = useLocale();
   const router = useRouter();
-  const [alias, setAlias] = useState(childProfile?.alias ?? "");
+  const [parentName, setParentName] = useState(childProfile?.parentName ?? "");
+  const [city, setCity] = useState(childProfile?.city ?? "");
   const [age, setAge] = useState(
     childProfile?.age === null || !childProfile ? "" : String(childProfile.age),
   );
-  const [city, setCity] = useState(childProfile?.city ?? "");
+  const [diagnosis, setDiagnosis] = useState(childProfile?.diagnosis ?? "");
+  const [status, setStatus] = useState<DocumentsStatus>(
+    childProfile?.documentsStatus ?? "",
+  );
+  const [documents, setDocuments] = useState<DocumentCode[]>(
+    childProfile?.documents ?? [],
+  );
   const [language, setLanguage] = useState<ChildProfile["language"]>(
     childProfile?.language ?? "",
   );
   const [needs, setNeeds] = useState(childProfile?.needs ?? []);
   const [error, setError] = useState(false);
+  const docLabels: Record<DocumentCode, string> = {
+    pmpk: f.docPmpk,
+    disability: f.docDisability,
+    ipr: f.docIpr,
+    doctor: f.docDoctor,
+  };
+  const statusOptions: [Exclude<DocumentsStatus, "">, string][] = [
+    ["have", f.docsHave],
+    ["none", f.docsNone],
+    ["unsure", f.docsUnsure],
+  ];
   return (
     <div className="onboarding-page">
       <div className="page-heading">
@@ -39,11 +65,15 @@ export default function OnboardingScreen() {
         onSubmit={(e) => {
           e.preventDefault();
           const profile: ChildProfile = {
-            alias: alias.trim(),
+            parentName: parentName.trim(),
+            alias: childProfile?.alias ?? "",
             age: age === "" ? null : Number(age),
             city,
             language,
             needs,
+            diagnosis: diagnosis.trim(),
+            documentsStatus: status,
+            documents: status === "have" ? documents : [],
             revision: (childProfile?.revision ?? 0) + 1,
           };
           if (!validProfile(profile)) {
@@ -56,20 +86,31 @@ export default function OnboardingScreen() {
           router.push(`/${locale}`);
         }}
       >
-        <div className="form-grid">
+        <div className="form-stack">
           <label>
-            {f.alias}
+            {f.parentName}
             <input
-              value={alias}
-              onChange={(e) => setAlias(e.target.value)}
-              maxLength={30}
-              autoComplete="off"
+              value={parentName}
+              onChange={(e) => setParentName(e.target.value)}
+              maxLength={60}
+              autoComplete="given-name"
+              placeholder={f.parentNamePlaceholder}
             />
+          </label>
+          <label>
+            {f.origin}
+            <select value={city} onChange={(e) => setCity(e.target.value)}>
+              <option value="">{f.unknown}</option>
+              <option value="Алматы">Алматы</option>
+              <option value="Астана">Астана</option>
+              <option value="other">{f.otherCity}</option>
+            </select>
           </label>
           <label>
             {f.age}
             <input
               type="number"
+              inputMode="numeric"
               min={0}
               max={21}
               step={1}
@@ -79,13 +120,59 @@ export default function OnboardingScreen() {
             />
           </label>
           <label>
-            {f.city}
-            <select value={city} onChange={(e) => setCity(e.target.value)}>
-              <option value="">{f.unknown}</option>
-              <option>Алматы</option>
-              <option>Астана</option>
-            </select>
+            {f.diagnosisLabel}
+            <input
+              value={diagnosis}
+              onChange={(e) => setDiagnosis(e.target.value)}
+              maxLength={120}
+              autoComplete="off"
+              aria-describedby="diagnosis-hint"
+            />
+            <span id="diagnosis-hint" className="quiet">
+              {f.diagnosisHint}
+            </span>
           </label>
+        </div>
+        <fieldset>
+          <legend>{f.documentsQuestion}</legend>
+          <div className="choice-row">
+            {statusOptions.map(([value, label]) => (
+              <label className="check need-option" key={value}>
+                <input
+                  type="radio"
+                  name="documents-status"
+                  checked={status === value}
+                  onChange={() => setStatus(value)}
+                />
+                {label}
+              </label>
+            ))}
+          </div>
+          {status === "have" && (
+            <div className="doc-options">
+              <p className="quiet">{f.docsWhich}</p>
+              {documentCodes.map((code) => (
+                <label className="check need-option" key={code}>
+                  <input
+                    type="checkbox"
+                    checked={documents.includes(code)}
+                    onChange={(e) =>
+                      setDocuments((values) =>
+                        e.target.checked
+                          ? [...values, code]
+                          : values.filter((v) => v !== code),
+                      )
+                    }
+                  />
+                  {docLabels[code]}
+                </label>
+              ))}
+            </div>
+          )}
+        </fieldset>
+        {(status === "none" || status === "unsure") && <DocumentGuidance />}
+        <details className="more-options">
+          <summary>{f.moreOptions}</summary>
           <label>
             {f.language}
             <select
@@ -99,29 +186,29 @@ export default function OnboardingScreen() {
               <option value="kk">{t.kazakh}</option>
             </select>
           </label>
-        </div>
-        <fieldset>
-          <legend>{f.needs}</legend>
-          <p className="quiet">{f.needsHint}</p>
-          <div className="need-options">
-            {needCodes.map((code) => (
-              <label className="check need-option" key={code}>
-                <input
-                  type="checkbox"
-                  checked={needs.includes(code)}
-                  onChange={(e) =>
-                    setNeeds((values) =>
-                      e.target.checked
-                        ? [...values, code]
-                        : values.filter((v) => v !== code),
-                    )
-                  }
-                />
-                {categoryLabels(locale)[code]}
-              </label>
-            ))}
-          </div>
-        </fieldset>
+          <fieldset>
+            <legend>{f.needs}</legend>
+            <p className="quiet">{f.needsHint}</p>
+            <div className="need-options">
+              {needCodes.map((code) => (
+                <label className="check need-option" key={code}>
+                  <input
+                    type="checkbox"
+                    checked={needs.includes(code)}
+                    onChange={(e) =>
+                      setNeeds((values) =>
+                        e.target.checked
+                          ? [...values, code]
+                          : values.filter((v) => v !== code),
+                      )
+                    }
+                  />
+                  {categoryLabels(locale)[code]}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+        </details>
         {error && (
           <p role="alert" className="form-error">
             {f.profileError}

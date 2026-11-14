@@ -14,9 +14,8 @@ test("сначала анкета, затем рекомендации; реда
   await expect(
     page.getByRole("heading", { name: "Сначала познакомимся" }),
   ).toBeVisible();
-  await page
-    .getByRole("textbox", { name: "Как называть ребёнка (необязательно)" })
-    .fill("Учебный ребёнок");
+  await page.getByRole("textbox", { name: "Ваше имя" }).fill("Учебный родитель");
+  await page.getByText("Уточнить подбор (необязательно)").click();
   await page
     .getByRole("combobox", { name: "Предпочтительный язык", exact: true })
     .selectOption("kk");
@@ -48,7 +47,7 @@ test("сначала анкета, затем рекомендации; реда
     .click();
   await expect(page.getByRole("button", { name: "Сохранить и подобрать", exact: true })).toBeVisible();
   await page
-    .getByRole("combobox", { name: "Город", exact: true })
+    .getByRole("combobox", { name: "Откуда вы?", exact: true })
     .selectOption("Астана");
   await page
     .getByRole("button", { name: "Сохранить и подобрать", exact: true })
@@ -206,4 +205,32 @@ test("форум: публикация, правка, комментарий, п
   await expect(
     page.getByRole("button", { name: "Жалоба сохранена в демо", exact: true }),
   ).toBeDisabled();
+});
+
+test("простая анкета: без справок сразу показываются шаги, имя и город сохраняются", async ({
+  page,
+}) => {
+  await page.goto("/ru");
+  await page.getByRole("textbox", { name: "Ваше имя" }).fill("Учебный родитель");
+  await page
+    .getByRole("combobox", { name: "Откуда вы?", exact: true })
+    .selectOption("other");
+  await page
+    .getByRole("textbox", { name: "Диагноз ребёнка, если знаете" })
+    .fill("учебный пример");
+  await expect(
+    page.getByRole("heading", { name: "Что можно сделать, если справок пока нет" }),
+  ).toHaveCount(0);
+  await page.getByLabel("Пока нет", { exact: true }).check();
+  await expect(
+    page.getByRole("heading", { name: "Что можно сделать, если справок пока нет" }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Сохранить и подобрать", exact: true })
+    .click();
+  await expect(page.getByText("Здравствуйте, Учебный родитель")).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Что можно сделать, если справок пока нет" }),
+  ).toBeVisible();
+  await expect(page.getByText("Другой город")).toBeVisible();
 });

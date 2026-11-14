@@ -4,13 +4,14 @@ import Link from "next/link";
 import { useDemo } from "@/ui/demo-shell";
 import { useLocale } from "@/ui/use-locale";
 import OnboardingScreen from "@/features/children/onboarding-screen";
+import { profileCity } from "@/features/children/service";
 import { searchNannies, type BookingMode } from "./service";
 import { LineIcon } from "@/ui/brand-art";
 export default function NannyScreen() {
   const { childProfile } = useDemo();
   const { locale, t, f } = useLocale();
   const [query, setQuery] = useState("");
-  const [city, setCity] = useState(childProfile?.city ?? "");
+  const [city, setCity] = useState(childProfile ? profileCity(childProfile) : "");
   const [language, setLanguage] = useState<string>(
     childProfile?.language ?? "",
   );
